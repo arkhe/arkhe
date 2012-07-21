@@ -1,0 +1,12 @@
+//PROJECT INCLUDES
+../../../include/base/
+
+//OUTPUT
+../../../bin
+or
+../../../lib
+
+get rid of ipch etc.
+Tools->Options->Text Editor->C/C++->Advanced
+
+Fallback location, first two to True and third empty (defaults to temp dir)

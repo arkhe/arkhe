@@ -1,0 +1,20 @@
+current: add functionality for rational numbers
+
+math:
+liner algebra
+interpolation
+regression
+
+geometry:
+ray2/3
+line2/3
+circle2/3
+sphere
+ellipse2/3
+bbox
+...
+
+intersection:
+ray/ray
+ray/line
+etc.

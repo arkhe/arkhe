@@ -1,0 +1,40 @@
+Global setup:
+ Set up git
+  git config --global user.name "Your Name"
+  git config --global user.email richard@rgbandalpha.com
+      
+Next steps:
+  mkdir arkhe
+  cd arkhe
+  git init
+  touch README
+  git add README
+  git commit -m 'first commit'
+  git remote add origin https://github.com/arkhe/arkhe.git
+  git push -u origin master
+      
+Existing Git Repo?
+  cd existing_git_repo
+  git remote add origin https://github.com/arkhe/arkhe.git
+  git push -u origin master
+
+==================================================================
+
+Git add, commit, push, pull
+If you make changes on your local repository you can add all your changes to your local history with
+
+git add .
+
+With the . you add all new files to the local history. With this command you commit everything to your local git repository.
+
+git commit -m "new changes"
+
+You can do multiple commit. If you feel you are done and everything is good enough to share it with your co-workers you can push all your commits to the server.
+
+git push
+
+If you want the updates from your co-workers you have to pull the changes.
+
+git pull
+
+Git pull is similar to svn update.
