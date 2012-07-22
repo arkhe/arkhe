@@ -113,6 +113,7 @@ template<> double get_zero<double>() { return 0.0; }
 template<> double get_unit<double>() { return 1.0; }
 template<> double set_zero<double>(double &x) { x = 0.0; }
 template<> double set_unit<double>(double &x) { x = 1.0; }
+template<> double get_recip<double>(const double &x) { return Math::recip(x); }
 template<> bool is_zero<double>(const double &x) { return Math::isZero(x); }
 template<> bool is_nan<double>(const double &x) { return Math::isNaN(x); }
 

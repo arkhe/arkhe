@@ -141,11 +141,12 @@ T *zero(unsigned int M,unsigned int N)
 	}
 	T *A = new T[num_elements];
 	unsigned int x = 0;
+	T z = get_zero<T>();
 	for(unsigned int i=0; i<M; i++)
 	{
 		for(unsigned int j=0; j<N; j++)
 		{
-			A[x++] = get_zero<T>();
+			A[x++] = z;
 		}
 	}
 	return A;
@@ -163,11 +164,13 @@ T *identity(unsigned int M)
 	}
 	T *A = new T[num_elements];
 	unsigned int x = 0;
+	T z = get_zero<T>();
+	T u = get_unit<T>();
 	for(unsigned int i=0; i<M; i++)
 	{
 		for(unsigned int j=0; j<M; j++)
 		{
-			i == j ? A[x++] = get_unit<T>() : A[x++] = get_zero<T>();
+			i == j ? A[x++] = u : A[x++] = z;
 		}
 	}
 	return A;
@@ -328,11 +331,11 @@ T *divide(unsigned int M,unsigned int N,const T *A,const T &B)
 	}
 
 	T *C = new T[num_elements];
-	if(Math::isZero(B))
+	if(is_zero<T>(B))
 	{
 		throw arkhe::base::Exception("division by zero");
 	}
-	T B_recip = Math::recip(B);
+	T B_recip = get_recip<T>(B);
 	for(unsigned int i=0; i<num_elements; i++)
 	{
 		C[i] = A[i] * B_recip;

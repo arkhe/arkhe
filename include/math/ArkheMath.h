@@ -56,6 +56,7 @@ template<typename T> T get_zero();
 template<typename T> T get_unit();
 template<typename T> T set_zero(T &t);
 template<typename T> T set_unit(T &t);
+template<typename T> T get_recip(const T &t);
 template<typename T> bool is_zero(const T &t);
 template<typename T> bool is_nan(const T &t);
 

@@ -151,8 +151,9 @@ int main(int argc,char **argv)
 
 		unsigned int LOOP = 100000;
 		unsigned int STEP = LOOP * 0.1;
-		const unsigned int DIM = 32;
-		unsigned int INVERSE_FAIL = 0;
+		const unsigned int DIM = 16;
+		unsigned int INVERTIBLE = 0;
+		unsigned int NON_INVERTIBLE = 0;
 		double TOTAL_TIME = 0.0;
 		TMatrixMM<DIM,double> identity;
 		for(unsigned int i=0; i<DIM; i++)
@@ -164,35 +165,37 @@ int main(int argc,char **argv)
 		TMatrixMM<DIM,double> test;
 		for(unsigned int j=0; j<DIM*DIM; j++)
 		{
-			test[j] = ::rand();
+			test[j] = ::rand() % 50;
 		}
-		std::cout << std::fixed << std::endl;
-		std::cout << test << std::endl;
-		std::cout << test.inverse() << std::endl;
+		
+		//std::cout << test << std::endl;
+		//std::cout << std::fixed << std::endl;
+		//std::cout << test.inverse() << std::endl;
+		//std::cout << std::scientific << std::endl;
 		TMatrixMM<DIM,double> res = test * test.inverse();
 		res.clean();
-		std::cout << res << std::endl;
+		//std::cout << res << std::endl;
 
-		std::cout << identity << std::endl;
+		//std::cout << identity << std::endl;
 
 		std::cout << "PERFORMING " << LOOP << " ITERATIONS WITH " << DIM << "x" << DIM << " MATRICES:" << std::endl;
 		std::cout << "GENERATE MATRIX WITH RANDOM ELEMENTS, AND COMPUTE IT'S INVERSE." << std::endl;
 		std::cout << "KEEP TRACK OF THE NUMBER OF NON-INVERTIBLE MATRICES." << std::endl;
 		std::cout << "-----------------------------------------------------------------" << std::endl;
-
+		unsigned int i = 0;
 		Timer timer;
 		timer.start();
-		for(unsigned int i=0; i<LOOP; i++)
+		while(INVERTIBLE < LOOP)
 		{
 			if(i % STEP == 0)
 			{
-				std::cout << "On loop #" << i << " of " << LOOP << " ..." << std::endl;
+				std::cout << "On loop " << i << " of " << LOOP << " ..." << std::endl;
 			}
 			TMatrixMM<DIM,double> m,mi,mxi,zero;
 			//init
 			for(unsigned int j=0; j<DIM*DIM; j++)
 			{
-				m[j] = ::rand();
+				m[j] = ::rand() % 100;
 			}
 			mi = m.inverse();
 			mi.clean();
@@ -200,15 +203,21 @@ int main(int argc,char **argv)
 			mxi.clean();
 			if(mi == zero)
 			{
-				INVERSE_FAIL++;
+				NON_INVERTIBLE++;
 			}
+			else
+			{
+				INVERTIBLE++;
+			}
+			i++;
 		}
 		timer.stop();
 		double t = timer.time();
+		std::cout << std::fixed << std::endl;
 		std::cout << "TOTAL TIME: " << t << " seconds." << std::endl;
-		std::cout << INVERSE_FAIL << " WERE NON-INVERTIBLE" << std::endl;
+		std::cout << INVERTIBLE << " WERE INVERTIBLE" << std::endl;
+		std::cout << NON_INVERTIBLE << " WERE NON-INVERTIBLE" << std::endl;
 		TOTAL_TIME += t;
-
 	}
 	catch(arkhe::base::Exception e)
 	{
