@@ -11,8 +11,6 @@
 #include <vector>
 #include <sstream>
 
-#include <iostream>
-
 namespace arkhe
 {
 
@@ -120,9 +118,21 @@ T *create(const std::vector<std::vector<T>> &elements,unsigned int &M,unsigned i
 	return A;
 }
 
+//set near-zero elements of MxN matrix to zero
+template<typename T> void clean(unsigned int M,unsigned int N,T *A)
+{
+	for(unsigned int i=0; i<M*N; i++)
+	{
+		if(is_zero(A[i]) || is_nan(A[i]))
+		{
+			A[i] = T(); //default constructor is assumed to default to zero
+		}
+	}
+}
+
 //create MxN zero matrix using given value for zero
 template<typename T>
-T *zero(unsigned int M,unsigned int N,const T &zero)
+T *zero(unsigned int M,unsigned int N)
 {
 	unsigned int num_elements = M*N;
 	if(num_elements == 0)
@@ -135,7 +145,7 @@ T *zero(unsigned int M,unsigned int N,const T &zero)
 	{
 		for(unsigned int j=0; j<N; j++)
 		{
-			A[x++] = zero;
+			A[x++] = get_zero<T>();
 		}
 	}
 	return A;
@@ -144,7 +154,7 @@ T *zero(unsigned int M,unsigned int N,const T &zero)
 //create MxM identity matrix using the given values
 //for entries of zero and one
 template<typename T>
-T *identity(unsigned int M,const T &zero,const T &one)
+T *identity(unsigned int M)
 {
 	unsigned int num_elements = M*M;
 	if(num_elements == 0)
@@ -157,7 +167,7 @@ T *identity(unsigned int M,const T &zero,const T &one)
 	{
 		for(unsigned int j=0; j<M; j++)
 		{
-			i == j ? A[x++] = one : A[x++] = zero;
+			i == j ? A[x++] = get_unit<T>() : A[x++] = get_zero<T>();
 		}
 	}
 	return A;
@@ -291,9 +301,18 @@ T *multiply(unsigned int M,unsigned int N,const T *A,unsigned int P,unsigned int
 	}
 
 	T *C = new T[num_elements];
-	for(unsigned int i=0; i<num_elements; i++)
+	unsigned int x = 0;
+	for(unsigned int i=0; i<N; i++)
 	{
-		C[i] = A[i] * B[i];
+		for(unsigned int j=0; j<P; j++)
+		{
+			T tmp = T(); //default to zero value
+			for(unsigned int k=0; k<N; k++)
+			{
+				tmp += A[index<T>(i,k,M,N)] * B[index<T>(k,j,N,P)];
+			}
+			C[x++] = tmp;
+		}
 	}
 	return C;
 }
@@ -327,7 +346,7 @@ bool equal(unsigned int M,unsigned int N,const T *A,const T *B)
 {
 	for(unsigned int i=0; i<M*N; i++)
 	{
-		if(A[i] != B[i])
+		if(!are_equal<T>(A[i],B[i],Math::LARGER_EPSILON))
 		{
 			return false;
 		}
@@ -406,40 +425,121 @@ T *transpose(unsigned int M,unsigned int N,const T *A,unsigned int *P=0,unsigned
 	return B;
 }
 
+//get MxM trace
+template<typename T>
+T trace(unsigned int M,const T *A)
+{
+	if(M == 0)
+	{
+		throw arkhe::base::Exception("zero element matrix");
+	}
+	T trace = T();
+	for(unsigned int i=0; i<M*M; i+=M+1)
+	{
+		trace += A[i];
+	}
+	return trace;
+}
+
+//perform LU decomposition and return either
+//the lower or upper triangular matrix
+enum LU
+{
+	LU_LOWER,
+	LU_UPPER
+};
+template<typename T>
+T *LU_decomposition(unsigned int M,const double *A,LU lu)
+{
+	if(M == 0)
+	{
+		throw arkhe::base::Exception("zero element matrix");
+	}
+
+	T *L = create<T>(M,M); //create zero matrices L and U
+	T *U = create<T>(M,M);
+	for(unsigned int k=0; k<M; k++)
+	{
+		L[index<T>(k,k,M,M)] = 1;
+
+		for(unsigned int j=k; j<M; j++)
+		{
+			T sum = T();
+			for(unsigned int s=0; s<k; s++)
+			{
+				sum += L[index<T>(k,s,M,M)] * U[index<T>(s,j,M,M)];
+			}
+			U[index<T>(k,j,M,M)] = A[index<T>(k,j,M,M)] - sum;
+		}
+		for(unsigned int i=k+1; i<M; i++)
+		{
+			T sum = T();
+			for(unsigned int s=0; s<k; s++)
+			{
+				sum += L[index<T>(i,s,M,M)] * U[index<T>(s,k,M,M)];
+			}
+			L[index<T>(i,k,M,M)] = (A[index<T>(i,k,M,M)] - sum) / U[index<T>(k,k,M,M)];
+		}
+	}
+	//return the lower matrix
+	if(lu == LU_LOWER)
+	{
+		delete[] U;
+		clean(M,M,L);
+		return L;
+	}
+	//otherwise return the upper matrix
+	delete[] L;
+	clean(M,M,U);
+	return U;
+}
+
 //get MxM determinant
 template<typename T>
 T determinant(unsigned int M,const T *A)
 {
-	std::cout << "M = " << M << std::endl;
-
-	T det;
-	bool init = true; //so we do an explicit assignment in the beginning
-	T tmp;
-	for(unsigned int j=0; j<M; j++)
+	T det = get_unit<T>();
+	double *U = LU_decomposition<T>(M,A,LU_UPPER);
+	for(unsigned int i=0; i<M; i++)
 	{
-		for(unsigned int i=0; i<M; i++)
-		{
-			tmp = A[index<T>(i,j,M,M)] * (int)Math::pow(-1,i+j) * determinant<T>(M,sub_matrix<T>(i,j,M,M,A));
-			if(init)
-			{
-				init = false;
-				det = tmp;
-			}
-			else
-			{
-				det += tmp;
-			}
-		}
+		det *= U[index<T>(i,i,M,M)];
 	}
+	delete[] U;
 	return det;
+}
+
+//get (i,j)'th cofactor
+template<typename T>
+T cofactor(unsigned int i,unsigned int j,unsigned int M,const T *A)
+{
+	T *B = sub_matrix<T>(i,j,M,M,A);
+	T C = (int)Math::pow(-1,i+j) * determinant<T>(M-1,B);
+	delete[] B;
+	return C;
 }
 
 //get MxM adjugate
 template<typename T>
 T *adjugate(unsigned int M,const T *A)
 {
-	throw arkhe::base::Exception("adjugate function not defined");
-	return 0;
+	if(M == 0)
+	{
+		throw arkhe::base::Exception("zero element matrix");
+	}
+
+	T *B = new T[M*M];
+	unsigned int x = 0;
+	for(unsigned int i=0; i<M; i++)
+	{
+		for(unsigned int j=0; j<M; j++)
+		{
+			B[x++] = cofactor<T>(i,j,M,A);
+		}
+	}
+	clean(M,M,B);
+	T *C = transpose<T>(M,M,B);
+	delete[] B;
+	return C;
 }
 
 //get MxM inverse
@@ -452,17 +552,19 @@ T *inverse(unsigned int M,const T *A,const bool (*zero_func)(const T &t),const T
 		throw arkhe::base::Exception("zero element matrix");
 	}
 
-	T *B = new T[num_elements];
 	//compute determinant
 	//if determinant is zero, then return zero matrix
 	T det = determinant(M,A);
 	if(zero_func(det))
 	{
-		B = create<T>(M,M);
+		return create<T>(M,M);
 	}
 	//inverse = adjugate * 1/determinant
 	T det_recip = recip_func(det);
-	B = multiply(M,M,A,M,M,adjugate(M,A));
+	T *adj = adjugate(M,A);
+	T *B = multiply<T>(M,M,adj,det_recip);
+	delete[] adj;
+	clean<T>(M,M,B);
 	return B;
 }
 

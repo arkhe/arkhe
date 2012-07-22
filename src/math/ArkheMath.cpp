@@ -17,6 +17,7 @@ const double Math::MIN = std::numeric_limits<const double>::min();
 const double Math::MAX = std::numeric_limits<const double>::max();
 const double Math::EPSILON = 1.0E-8;
 const double Math::SMALLER_EPSILON = std::numeric_limits<const double>::epsilon(); //2.22045e-016
+const double Math::LARGER_EPSILON = 1.0E-3;
 const double Math::PI = 3.1415926535897931; //::acosl(-1.0L);
 const double Math::TWO_PI = 2.0 * Math::PI;
 const double Math::HALF_PI = 0.5 * Math::PI;
@@ -58,9 +59,9 @@ const double Math::recip(const double &x)
 }
 
 //check whether two values are equal within an epsilon value
-const bool Math::equal(const double &a,const double &b)
+const bool Math::equal(const double &a,const double &b,const double epsilon)
 {
-	return ::abs(a-b) < Math::EPSILON;
+	return ::abs(a-b) < epsilon;
 }
 
 //return absolute value
@@ -105,6 +106,15 @@ const int Math::signum(const double &x)
 	//1 if x > 0
 	return ((0 < x) - (x < 0));
 }
+
+//template specializations
+template<> bool are_equal<double>(const double &a,const double &b,const double &epsilon) { return Math::equal(a,b,epsilon); }
+template<> double get_zero<double>() { return 0.0; }
+template<> double get_unit<double>() { return 1.0; }
+template<> double set_zero<double>(double &x) { x = 0.0; }
+template<> double set_unit<double>(double &x) { x = 1.0; }
+template<> bool is_zero<double>(const double &x) { return Math::isZero(x); }
+template<> bool is_nan<double>(const double &x) { return Math::isNaN(x); }
 
 } //namespace math
 

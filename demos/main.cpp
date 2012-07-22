@@ -16,6 +16,7 @@ using namespace arkhe::math;
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 #include <conio.h> //windows only
 
 int main(int argc,char **argv)
@@ -25,39 +26,9 @@ int main(int argc,char **argv)
 
 	try
 	{
-		Vector2 v1,v2(1,1);
-		std::cout << v1 << std::endl;
-		std::cout << v2 << std::endl;
-
-		std::cout << Vector3::X_AXIS.cross(Vector3::Y_AXIS) << std::endl;
-
-		Normal3 n(1,2,3);
-		std::cout << n << std::endl;
-		n.normalize();
-		std::cout << n << std::endl;
-
-		Vector2 v3 = v1+v2;
-
-		Ray2 r(Point2(1,2),Vector2(3,4));
-		std::cout << r << std::endl;
-		Point2 p(1,2);
-		Point2 pr = p + v1;
-		std::cout << r(1) << std::endl;
-
-		Matrix22 m22;
-		std::cout << m22 << std::endl;
-		//Matrix22 n22 = m22.inverse();
-
-		Matrix22 m2 = Matrix22::IDENTITY;
-		Matrix33 m3 = Matrix33::IDENTITY;
-		Matrix44 m4 = Matrix44::IDENTITY;
-		std::cout << m2 << std::endl;
-		std::cout << m3 << std::endl;
-		std::cout << m4 << std::endl;
-
-		{
+		/*{
 			std::cout << "BENCHMARK:" << std::endl;
-			unsigned int BENCH_LOOP = 25;
+			unsigned int BENCH_LOOP = 21;
 			unsigned int COUNT = 2;
 			unsigned int POWER = 2;
 			double t;
@@ -76,24 +47,15 @@ int main(int argc,char **argv)
 					v22 = Vector2(j,i);
 					v31 = Vector3(i,j,(i+j));
 					v32 = Vector3((i+j),j,i);
-					Vector2 tmp2 = v21.parallelTo(v22);
-					tmp2.normalize();
+					
 					double dot2 = v21.dot(v22);
-					Vector3 tmp3 = v31.parallelTo(v32);
-					tmp3.normalize();
 					double dot3 = v31.dot(v32);
 
-					Matrix22 m1,m2,m3;
-					Matrix33 m4,m5,m6;
+					v31.normalize();
+					v21.normalize();
+					
+
 					Matrix44 m7,m8,m9;
-					m1 = m2;
-					m2 = m3 + m1;
-					m3 = m1 * m2;
-					m1 = m2.transpose();
-					m4 = m5;
-					m5 = m6 + m5;
-					m6 = m5 * m6;
-					m4 = m5.transpose();
 					m7 = m8;
 					m8 = m9 + m7;
 					m9 = m7 * m8;
@@ -108,12 +70,145 @@ int main(int argc,char **argv)
 			}
 			std::cout << "--------------------------------------------" << std::endl;
 			std::cout << TOTAL_COUNT << " ITERATIONS TOOK " << TOTAL_TIME << " SECONDS" << std::endl;
-		}
+		}*/
 
-		Matrix33 m = Matrix33::IDENTITY;
+		/*//Matrix44 m(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16),U,L;
+		Matrix44 m(6,3,5,78,0,1,2,54,78,3,45,24,91,0,1,34),U,L;
 		std::cout << m << std::endl;
-		//double det = m.determinant();
-		//std::cout << "DETERMINANT: " << det << std::endl;
+		std::cout << "TRACE: " << m.trace() << std::endl;
+
+		std::cout << "TESTING LU DECOMPOSITION:" << std::endl;
+		std::cout << "MATRIX:\n" << m << std::endl;
+		L = m.lower();
+		L.clean();
+		std::cout << "LOWER MATRIX:\n" << L << std::endl;
+		U = m.upper();
+		U.clean();
+		std::cout << "UPPER MATRIX:\n" << U << std::endl;
+
+		std::cout << "LOWER x UPPER:\n" << L * U << std::endl;
+
+		Matrix22 m2(1,2,3,4);
+		std::cout << m2 << std::endl;
+		double det = m2.determinant();
+		std::cout << "2x2 DETERMINANT: " << det << std::endl;
+		std::cout << "2x2 ADJUGATE:\n" << m2.adjugate() << std::endl;
+		det = m.determinant(); 
+		std::cout << "4x4 DETERMINANT: " << det << std::endl;
+		std::cout << "4x4 ADJUGATE:\n" << m.adjugate() << std::endl;
+
+		Matrix33 m3 = Matrix33(1,2,3,0,1,4,5,6,0);
+		std::cout << m3 << std::endl;
+		//m3 = m3.transpose();
+		std::cout << "3x3 DETERMINANT: " << m3.determinant() << std::endl;
+		std::cout << "3x3 ADJUGATE:\n" << m3.adjugate() << std::endl;
+
+		std::cout << "=====================================" << std::endl;
+		TMatrixMM<5,double> M;
+		M[0] = 25;
+		M[1] = 512;
+		M[2] = 15;
+		M[3] = 15;
+		M[4] = 155;
+
+		M[5] = 51;
+		M[6] = 541;
+		M[7] = 54;
+		M[8] = 0;
+		M[9] = 51;
+
+		M[10] = 48;
+		M[11] = 21;
+		M[12] = 25;
+		M[13] = 5;
+		M[14] = 48;
+
+		M[15] = 0;
+		M[16] = 7;
+		M[17] = 4;
+		M[18] = 596;
+		M[19] = 69;
+
+		M[20] = 16;
+		M[21] = 26;
+		M[22] = 64;
+		M[23] = 65;
+		M[24] = 9;
+		//std::cout << std::fixed << std::endl;
+		std::cout << M << std::endl;
+		std::cout << "5x5 DETERMINANT: " << M.determinant() << std::endl;
+		std::cout << "5x5 ADJUGATE:\n" << M.adjugate() << std::endl;
+		TMatrixMM<5,double> MxI = M * M.inverse();
+		MxI.clean();
+		std::cout << "5x5 MATRIX * INVERSE:\n" << MxI << std::endl;*/
+		
+		/*Matrix33 M2(1,0,3,4,0,6,0,8,9);
+		std::cout << M2 << std::endl;
+		std::cout << "3x3 DETERMINANT: " << M2.determinant() << std::endl;
+		std::cout << "3x3 ADJUGATE:\n" << M2.adjugate() << std::endl;
+		std::cout << "3x3 INVERSE:\n" << M2.inverse() << std::endl;
+		std::cout << "3x3 MATRIX * INVERSE:\n" << M2 * M2.inverse() << std::endl;*/
+
+		unsigned int LOOP = 100000;
+		unsigned int STEP = LOOP * 0.1;
+		const unsigned int DIM = 32;
+		unsigned int INVERSE_FAIL = 0;
+		double TOTAL_TIME = 0.0;
+		TMatrixMM<DIM,double> identity;
+		for(unsigned int i=0; i<DIM; i++)
+			for(unsigned int j=0; j<DIM; j++)
+				if(i == j)
+					identity(i,j) = 1.0;
+				else
+					identity(i,j) = 0.0;
+		TMatrixMM<DIM,double> test;
+		for(unsigned int j=0; j<DIM*DIM; j++)
+		{
+			test[j] = ::rand();
+		}
+		std::cout << std::fixed << std::endl;
+		std::cout << test << std::endl;
+		std::cout << test.inverse() << std::endl;
+		TMatrixMM<DIM,double> res = test * test.inverse();
+		res.clean();
+		std::cout << res << std::endl;
+
+		std::cout << identity << std::endl;
+
+		std::cout << "PERFORMING " << LOOP << " ITERATIONS WITH " << DIM << "x" << DIM << " MATRICES:" << std::endl;
+		std::cout << "GENERATE MATRIX WITH RANDOM ELEMENTS, AND COMPUTE IT'S INVERSE." << std::endl;
+		std::cout << "KEEP TRACK OF THE NUMBER OF NON-INVERTIBLE MATRICES." << std::endl;
+		std::cout << "-----------------------------------------------------------------" << std::endl;
+
+		Timer timer;
+		timer.start();
+		for(unsigned int i=0; i<LOOP; i++)
+		{
+			if(i % STEP == 0)
+			{
+				std::cout << "On loop #" << i << " of " << LOOP << " ..." << std::endl;
+			}
+			TMatrixMM<DIM,double> m,mi,mxi,zero;
+			//init
+			for(unsigned int j=0; j<DIM*DIM; j++)
+			{
+				m[j] = ::rand();
+			}
+			mi = m.inverse();
+			mi.clean();
+			mxi = m * mi;
+			mxi.clean();
+			if(mi == zero)
+			{
+				INVERSE_FAIL++;
+			}
+		}
+		timer.stop();
+		double t = timer.time();
+		std::cout << "TOTAL TIME: " << t << " seconds." << std::endl;
+		std::cout << INVERSE_FAIL << " WERE NON-INVERTIBLE" << std::endl;
+		TOTAL_TIME += t;
+
 	}
 	catch(arkhe::base::Exception e)
 	{

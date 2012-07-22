@@ -52,7 +52,12 @@ public:
 	//friend operators
 	template<unsigned int M,typename T> friend std::ostream &operator<<(std::ostream &out,const TMatrixMM<M,T> &m);
 	//methods
+	void clean();
+	bool zero() const;
 	TMatrixMM transpose() const;
+	T trace() const;
+	TMatrixMM lower() const;
+	TMatrixMM upper() const;
 	T determinant() const;
 	TMatrixMM adjugate() const;
 	TMatrixMM inverse() const;
@@ -259,11 +264,46 @@ std::ostream &operator<<(std::ostream &out,const TMatrixMM<M,T> &m)
 	return matrix_ops::stream_out(M,M,m.m_matrix,out);
 }
 
+//set near-zero elements to zero
+template<unsigned int M,typename T>
+void TMatrixMM<M,T>::clean()
+{
+	matrix_ops::clean(M,M,m_matrix);
+}
+
+//is this a zero matrix?
+template<unsigned int M,typename T>
+bool TMatrixMM<M,T>::zero() const
+{
+	return matrix_ops<T>::zero(M,M,m_matrix);
+}
+
 //get transpose
 template<unsigned int M,typename T>
 TMatrixMM<M,T> TMatrixMM<M,T>::transpose() const
 {
 	return TMatrixMM<M,T>(matrix_ops::transpose(M,M,m_matrix));
+}
+
+//get trace
+template<unsigned int M,typename T>
+T TMatrixMM<M,T>::trace() const
+{
+	return matrix_ops::trace(M,m_matrix);
+}
+
+//get lower trianglular matrix
+template<unsigned int M,typename T>
+TMatrixMM<M,T> TMatrixMM<M,T>::lower() const
+{
+	return TMatrixMM<M,T>(matrix_ops::LU_decomposition<T>(M,m_matrix,matrix_ops::LU_LOWER));
+}
+
+//get upper triangular matrix
+template<unsigned int M,typename T>
+TMatrixMM<M,T> TMatrixMM<M,T>::upper() const
+{
+	return TMatrixMM<M,T>(matrix_ops::LU_decomposition<T>(M,m_matrix,matrix_ops::LU_UPPER));
 }
 
 //get determinant

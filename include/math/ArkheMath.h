@@ -17,7 +17,7 @@ public:
 	static const bool isNaN(const double &x);
 	static void clean(double &x);
 	static const double recip(const double &x);
-	static const bool equal(const double &a,const double &b);
+	static const bool equal(const double &a,const double &b,const double epsilon=Math::EPSILON);
 	static const double abs(const double &x);
 	static const double sqr(const double &x);
 	static const double sqrt(const double &x);
@@ -36,6 +36,7 @@ public:
 	static const double MAX;
 	static const double EPSILON;
 	static const double SMALLER_EPSILON;
+	static const double LARGER_EPSILON;
 	static const double NaN;
 	static const double PI;
 	static const double HALF_PI;
@@ -48,6 +49,15 @@ private:
 protected:
 	//
 }; //class Math
+
+//template specialization
+template<typename T> bool are_equal(const T &a,const T &b,const T &epsilon);
+template<typename T> T get_zero();
+template<typename T> T get_unit();
+template<typename T> T set_zero(T &t);
+template<typename T> T set_unit(T &t);
+template<typename T> bool is_zero(const T &t);
+template<typename T> bool is_nan(const T &t);
 
 //template functions
 //get min value from pair
