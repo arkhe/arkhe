@@ -12,6 +12,14 @@ using namespace arkhe::base;
 #include "ArkheMathAPI.h"
 using namespace arkhe::math;
 
+//arkhe app includes
+#include "ArkheApp.h"
+#include "ArkheGLUTWrapper.h"
+using namespace arkhe::app;
+
+//glut includes
+#include <gl/glut.h>
+
 //std includes
 #include <iostream>
 #include <vector>
@@ -19,12 +27,133 @@ using namespace arkhe::math;
 #include <iomanip>
 #include <conio.h> //windows only
 
+class TestApp : public App
+{
+public:
+	TestApp()
+	{
+		width = height = 100;
+		inverse = false;
+		pixels = new float[width*height*3];
+	}
+	~TestApp() { if(pixels) delete[] pixels; }
+	void initializeGraphics()
+	{
+		//find an invertible matrix
+		unsigned int y = 0;
+		int pick[100*100];
+		TMatrixMM<100,float> zero;
+		while(true)
+		{
+			for(unsigned int j=0; j<width*height; j++)
+			{
+				pick[j] = ::rand() % 1024;
+			}
+			for(unsigned int j=0; j<width*height; j++)
+			{
+				m_R[j] = pick[j];
+			}
+			float det = m_R.determinant();
+			if(!Math::isZero(det))
+			{
+				break;
+			}
+			y++;
+			std::cout << "ATTEMPT " << y << " TO FIND AN INVERTIBLE MATRIX FAILED." << std::endl;
+		}
+		std::cout << "GOT INVERTIBLE MATRIX." << std::endl;
+		std::cout << "MIN ELEM: " << m_R.min_element() << std::endl;
+		std::cout << "MAX ELEM: " << m_R.max_element() << std::endl;
+		m_R /= m_R.max_element();
+		unsigned int x = 0;
+		for(unsigned int i=0; i<height; i++)
+		{
+			for(unsigned int j=0; j<width; j++)
+			{
+				pixels[x++] = m_R(j,i);
+				pixels[x++] = m_R(j,i);
+				pixels[x++] = 0.0f;
+			}
+		}
+		m_RI = m_R.inverse();
+		//m_GI = m_G.inverse();
+		if(m_GI == zero && m_RI == zero)
+		{
+			std::cout << "BOTH NON-INVERTIBLE" << std::endl;
+		}
+		else
+		{
+			std::cout << "BOTH INVERTIBLE" << std::endl;
+		}
+	}
+	void doit()
+	{
+		unsigned int x = 0;
+		for(unsigned int i=0; i<height; i++)
+		{
+			for(unsigned int j=0; j<width; j++)
+			{
+				if(inverse)
+				{
+					pixels[x++] = m_RI(j,i);
+					pixels[x++] = m_GI(j,i);
+				}
+				else
+				{
+					pixels[x++] = m_R(j,i);
+					pixels[x++] = m_G(j,i);
+				}
+				pixels[x++] = 0.0f;
+			}
+		}
+	}
+	void display()
+	{
+		glDisable(GL_DEPTH_TEST);
+
+		//temporarily set view to orthographic
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0.0,(double)width,0.0,(double)height,-1.0,1.0);
+
+		//move to modelview mode
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
+
+		glDrawPixels(width,height,GL_RGB,GL_FLOAT,pixels);
+
+		//pop the matrices to return to how we were before
+		glPopMatrix();
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+
+		glEnable(GL_DEPTH_TEST);
+	}
+	void key(unsigned char k)
+	{
+		switch(k)
+		{
+		case 'i':
+			inverse = !inverse;
+			doit();
+			break;
+		}
+	}
+private:
+	bool inverse;
+	TMatrixMM<100,float> m_R,m_G,m_RI,m_GI;
+	float *pixels;
+};
+
 int main(int argc,char **argv)
 {
-	//GLUTWrapper::setApplication(new TestApp);
-	//GLUTWrapper::run(argc,argv);	
+	GLUTWrapper::setApplication(new TestApp);
+	GLUTWrapper::run(argc,argv);	
 
-	try
+	/*try
 	{
 		/*{
 			std::cout << "BENCHMARK:" << std::endl;
@@ -149,7 +278,27 @@ int main(int argc,char **argv)
 		std::cout << "3x3 INVERSE:\n" << M2.inverse() << std::endl;
 		std::cout << "3x3 MATRIX * INVERSE:\n" << M2 * M2.inverse() << std::endl;*/
 
-		unsigned int LOOP = 100000;
+		/*const unsigned int SIZE = 512;
+		TMatrixMM<SIZE,double> m,mi;
+		for(unsigned int i=0; i<SIZE; i++)
+		{
+			m[0] = ::rand() % 50;
+		}
+		Timer timer;
+		timer.start();
+		mi = m.inverse();
+		timer.stop();
+		double t = timer.time();
+		if(!mi.zero())
+		{
+			std::cout << "INVERSION OF " << SIZE << 'x' << SIZE << " MATRIX TOOK " << t << " SECONDS" << std::endl;
+		}
+		else
+		{
+			std::cout << "NOT INVERTIBLE" << std::endl;
+		}*/
+
+		/*unsigned int LOOP = 100000;
 		unsigned int STEP = LOOP * 0.1;
 		const unsigned int DIM = 16;
 		unsigned int INVERTIBLE = 0;
@@ -218,15 +367,16 @@ int main(int argc,char **argv)
 		std::cout << INVERTIBLE << " WERE INVERTIBLE" << std::endl;
 		std::cout << NON_INVERTIBLE << " WERE NON-INVERTIBLE" << std::endl;
 		TOTAL_TIME += t;
-	}
+	}*/
+	/*}
 	catch(arkhe::base::Exception e)
 	{
 		std::cout << e.what() << std::endl;
-	}
+	}*/
 
 	//DO NOT ERASE
 
-	std::cout << std::endl;
+	/*std::cout << std::endl;
 	std::cout << "Running integrity tests..." << std::endl;
 	try
 	{
@@ -237,9 +387,9 @@ int main(int argc,char **argv)
 	catch(arkhe::base::Exception e)
 	{
 		std::cout << e.what() << std::endl;
-	}
+	}*/
 
-	while(!_kbhit()) ;
+	//while(!_kbhit()) ;
 
 	return 0;
 }

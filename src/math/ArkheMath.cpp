@@ -107,14 +107,35 @@ const int Math::signum(const double &x)
 	return ((0 < x) - (x < 0));
 }
 
+//get random number between 0 and n
+const double Math::rand(unsigned int n)
+{
+	return (double)(::rand() % n);
+}
+
 //template specializations
+template<> bool are_equal<float>(const float &a,const float &b,const float &epsilon) { return Math::equal(a,b,epsilon); }
 template<> bool are_equal<double>(const double &a,const double &b,const double &epsilon) { return Math::equal(a,b,epsilon); }
+
+template<> float get_zero<float>() { return 0.0f; }
 template<> double get_zero<double>() { return 0.0; }
+
+template<> float get_unit<float>() { return 1.0f; }
 template<> double get_unit<double>() { return 1.0; }
+
+template<> float set_zero<float>(float &x) { x = 0.0f; }
 template<> double set_zero<double>(double &x) { x = 0.0; }
+
+template<> float set_unit<float>(float &x) { x = 1.0f; }
 template<> double set_unit<double>(double &x) { x = 1.0; }
+
+template<> float get_recip<float>(const float &x) { return (float)Math::recip(x); }
 template<> double get_recip<double>(const double &x) { return Math::recip(x); }
+
+template<> bool is_zero<float>(const float &x) { return Math::isZero(x); }
 template<> bool is_zero<double>(const double &x) { return Math::isZero(x); }
+
+template<> bool is_nan<float>(const float &x) { return Math::isNaN(x); }
 template<> bool is_nan<double>(const double &x) { return Math::isNaN(x); }
 
 } //namespace math

@@ -176,7 +176,7 @@ TMatrixMN<T> TMatrixMN<T>::operator+(const TMatrixMN<T> &right) const
 template<typename T>
 TMatrixMN<T> &TMatrixMN<T>::operator+=(const TMatrixMN<T> &right)
 {
-	double *matrix = matrix_ops::add(m_rows,m_cols,m_matrix,right.m_rows,right.m_cols,right.m_matrix);
+	T *matrix = matrix_ops::add(m_rows,m_cols,m_matrix,right.m_rows,right.m_cols,right.m_matrix);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -206,7 +206,7 @@ TMatrixMN<T> TMatrixMN<T>::operator-(const TMatrixMN<T> &right) const
 template<typename T>
 TMatrixMN<T> &TMatrixMN<T>::operator-=(const TMatrixMN<T> &right)
 {
-	double *matrix = matrix_ops::subtract(m_rows,m_cols,m_matrix,right.m_rows,right.m_cols,right.m_matrix);
+	T *matrix = matrix_ops::subtract(m_rows,m_cols,m_matrix,right.m_rows,right.m_cols,right.m_matrix);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -236,7 +236,7 @@ TMatrixMN<T> TMatrixMN<T>::operator*(const TMatrixMN<T> &right) const
 template<typename T>
 TMatrixMN<T> &TMatrixMN<T>::operator*=(const T &t)
 {
-	double *matrix = matrix_ops::multiply(m_rows,m_cols,m_matrix,t);
+	T *matrix = matrix_ops::multiply(m_rows,m_cols,m_matrix,t);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -246,7 +246,7 @@ TMatrixMN<T> &TMatrixMN<T>::operator*=(const T &t)
 template<typename T>
 TMatrixMN<T> &TMatrixMN<T>::operator*=(const TMatrixMN<T> &right)
 {
-	double *matrix = matrix_ops::multiply(m_rows,m_cols,m_matrix,right.m_rows,right.m_cols,right.m_matrix);
+	T *matrix = matrix_ops::multiply(m_rows,m_cols,m_matrix,right.m_rows,right.m_cols,right.m_matrix);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -266,7 +266,7 @@ TMatrixMN<T> TMatrixMN<T>::operator/(const T &t) const
 template<typename T>
 TMatrixMN<T> &TMatrixMN<T>::operator/=(const T &t)
 {
-	double *matrix = matrix_ops::divide(m_rows,m_cols,m_matrix,t);
+	T *matrix = matrix_ops::divide(m_rows,m_cols,m_matrix,t);
 	destroy();
 	m_matrix = matrix;
 	return *this;

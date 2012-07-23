@@ -69,8 +69,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>../../../include/base;../../../include/math;../../../include/app;$(IncludePath)</IncludePath>
+    <IncludePath>../../../include/base;../../../include/math;../../../include/app;../../../extern/include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)../../../bin/</OutDir>
+    <LibraryPath>../../../extern/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -79,8 +80,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>../../../include/base;../../../include/math;../../../include/app;$(IncludePath)</IncludePath>
+    <IncludePath>../../../include/base;../../../include/math;../../../include/app;../../../extern/include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)../../../bin/</OutDir>
+    <LibraryPath>../../../extern/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,6 +108,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glut64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -140,9 +143,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glut64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\app\ArkheApp.h" />
+    <ClInclude Include="..\..\..\include\app\ArkheGLUTWrapper.h" />
     <ClInclude Include="..\..\..\include\base\ArkheDefines.h" />
     <ClInclude Include="..\..\..\include\base\ArkheException.h" />
     <ClInclude Include="..\..\..\include\base\ArkheT2dArray.hpp" />
@@ -168,6 +174,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\demos\main.cpp" />
+    <ClCompile Include="..\..\..\src\app\ArkheApp.cpp" />
+    <ClCompile Include="..\..\..\src\app\ArkheGLUTWrapper.cpp" />
     <ClCompile Include="..\..\..\src\base\ArkheException.cpp" />
     <ClCompile Include="..\..\..\src\base\ArkheTimer.cpp" />
     <ClCompile Include="..\..\..\src\math\ArkheAngle.cpp" />

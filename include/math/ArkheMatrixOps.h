@@ -152,6 +152,65 @@ T *zero(unsigned int M,unsigned int N)
 	return A;
 }
 
+//is NxM matrix zero?
+template<typename T>
+bool zero(unsigned int M,unsigned int N,const T *A)
+{
+	unsigned int num_elements = M*N;
+	if(num_elements == 0)
+	{
+		throw arkhe::base::Exception("zero element matrix");
+	}
+	for(unsigned int i=0; i<num_elements; i++)
+	{
+		if(is_zero<T>(A[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+//get min element
+template<typename T>
+T min_element(unsigned int M,unsigned int N,const T *A)
+{
+	unsigned int num_elements = M*N;
+	if(num_elements == 0)
+	{
+		throw arkhe::base::Exception("zero element matrix");
+	}
+	T B = A[0];
+	for(unsigned int i=1; i<num_elements; i++)
+	{
+		if(A[i] < B)
+		{
+			B = A[i];
+		}
+	}
+	return B;
+}
+
+//get max element
+template<typename T>
+T max_element(unsigned int M,unsigned int N,const T *A)
+{
+	unsigned int num_elements = M*N;
+	if(num_elements == 0)
+	{
+		throw arkhe::base::Exception("zero element matrix");
+	}
+	T B = A[0];
+	for(unsigned int i=1; i<num_elements; i++)
+	{
+		if(A[i] > B)
+		{
+			B = A[i];
+		}
+	}
+	return B;
+}
+
 //create MxM identity matrix using the given values
 //for entries of zero and one
 template<typename T>
@@ -324,7 +383,7 @@ T *multiply(unsigned int M,unsigned int N,const T *A,unsigned int P,unsigned int
 template<typename T>
 T *divide(unsigned int M,unsigned int N,const T *A,const T &B)
 {
-	unsigned int num_elements = N*P;
+	unsigned int num_elements = M*N;
 	if(num_elements == 0)
 	{
 		throw arkhe::base::Exception("zero element matrix");
@@ -452,7 +511,7 @@ enum LU
 	LU_UPPER
 };
 template<typename T>
-T *LU_decomposition(unsigned int M,const double *A,LU lu)
+T *LU_decomposition(unsigned int M,const T *A,LU lu)
 {
 	if(M == 0)
 	{
@@ -502,7 +561,7 @@ template<typename T>
 T determinant(unsigned int M,const T *A)
 {
 	T det = get_unit<T>();
-	double *U = LU_decomposition<T>(M,A,LU_UPPER);
+	T *U = LU_decomposition<T>(M,A,LU_UPPER);
 	for(unsigned int i=0; i<M; i++)
 	{
 		det *= U[index<T>(i,i,M,M)];
@@ -547,7 +606,7 @@ T *adjugate(unsigned int M,const T *A)
 
 //get MxM inverse
 template<typename T>
-T *inverse(unsigned int M,const T *A,const bool (*zero_func)(const T &t),const T (*recip_func)(const T &t))
+T *inverse(unsigned int M,const T *A) //,const bool (*zero_func)(const T &t),const T (*recip_func)(const T &t))
 {
 	unsigned int num_elements = M*M;
 	if(num_elements == 0)
@@ -558,12 +617,12 @@ T *inverse(unsigned int M,const T *A,const bool (*zero_func)(const T &t),const T
 	//compute determinant
 	//if determinant is zero, then return zero matrix
 	T det = determinant(M,A);
-	if(zero_func(det))
+	if(is_zero<T>(det))
 	{
 		return create<T>(M,M);
 	}
 	//inverse = adjugate * 1/determinant
-	T det_recip = recip_func(det);
+	T det_recip = get_recip<T>(det);
 	T *adj = adjugate(M,A);
 	T *B = multiply<T>(M,M,adj,det_recip);
 	delete[] adj;

@@ -25,6 +25,12 @@
     <Filter Include="src\math">
       <UniqueIdentifier>{551a2017-974e-409d-8651-546ec93c5ac8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\app">
+      <UniqueIdentifier>{f809b2f8-0482-455e-b1e4-fdf9fe398d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\app">
+      <UniqueIdentifier>{259add86-e466-44db-bc8d-169e4f6aa1f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\base\ArkheDefines.h">
@@ -93,6 +99,12 @@
     <ClInclude Include="..\..\..\include\math\math_integrity_tests.h">
       <Filter>include\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\app\ArkheApp.h">
+      <Filter>include\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\app\ArkheGLUTWrapper.h">
+      <Filter>include\app</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\base\ArkheException.cpp">
@@ -130,6 +142,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\demos\main.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\app\ArkheApp.cpp">
+      <Filter>src\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\app\ArkheGLUTWrapper.cpp">
+      <Filter>src\app</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

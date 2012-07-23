@@ -54,6 +54,8 @@ public:
 	//methods
 	void clean();
 	bool zero() const;
+	T min_element() const;
+	T max_element() const;
 	TMatrixMM transpose() const;
 	T trace() const;
 	TMatrixMM lower() const;
@@ -162,7 +164,7 @@ TMatrixMM<M,T> TMatrixMM<M,T>::operator+(const TMatrixMM<M,T> &right) const
 template<unsigned int M,typename T>
 TMatrixMM<M,T> &TMatrixMM<M,T>::operator+=(const TMatrixMM<M,T> &right)
 {
-	double *matrix = matrix_ops::add(M,M,m_matrix,M,M,right.m_matrix);
+	T *matrix = matrix_ops::add(M,M,m_matrix,M,M,right.m_matrix);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -186,7 +188,7 @@ TMatrixMM<M,T> TMatrixMM<M,T>::operator-(const TMatrixMM<M,T> &right) const
 template<unsigned int M,typename T>
 TMatrixMM<M,T> &TMatrixMM<M,T>::operator-=(const TMatrixMM<M,T> &right)
 {
-	double *matrix = matrix_ops::subtract(M,M,m_matrix,M,M,right.m_matrix);
+	T *matrix = matrix_ops::subtract(M,M,m_matrix,M,M,right.m_matrix);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -210,7 +212,7 @@ TMatrixMM<M,T> TMatrixMM<M,T>::operator*(const TMatrixMM<M,T> &right) const
 template<unsigned int M,typename T>
 TMatrixMM<M,T> &TMatrixMM<M,T>::operator*=(const T &t)
 {
-	double *matrix = matrix_ops::multiply(M,M,m_matrix,t);
+	T *matrix = matrix_ops::multiply(M,M,m_matrix,t);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -220,7 +222,7 @@ TMatrixMM<M,T> &TMatrixMM<M,T>::operator*=(const T &t)
 template<unsigned int M,typename T>
 TMatrixMM<M,T> &TMatrixMM<M,T>::operator*=(const TMatrixMM<M,T> &right)
 {
-	double *matrix = matrix_ops::multiply(M,M,m_matrix,M,M,right.m_matrix);
+	T *matrix = matrix_ops::multiply(M,M,m_matrix,M,M,right.m_matrix);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -237,7 +239,7 @@ TMatrixMM<M,T> TMatrixMM<M,T>::operator/(const T &t) const
 template<unsigned int M,typename T>
 TMatrixMM<M,T> &TMatrixMM<M,T>::operator/=(const T &t)
 {
-	double *matrix = matrix_ops::divide(M,M,m_matrix,t);
+	T *matrix = matrix_ops::divide(M,M,m_matrix,t);
 	destroy();
 	m_matrix = matrix;
 	return *this;
@@ -275,8 +277,11 @@ void TMatrixMM<M,T>::clean()
 template<unsigned int M,typename T>
 bool TMatrixMM<M,T>::zero() const
 {
-	return matrix_ops<T>::zero(M,M,m_matrix);
+	return matrix_ops::zero<T>(M,M,m_matrix);
 }
+
+template<unsigned int M,typename T> T TMatrixMM<M,T>::min_element() const { return matrix_ops::min_element<T>(M,M,m_matrix); }
+template<unsigned int M,typename T> T TMatrixMM<M,T>::max_element() const { return matrix_ops::max_element<T>(M,M,m_matrix); }
 
 //get transpose
 template<unsigned int M,typename T>
@@ -324,7 +329,7 @@ TMatrixMM<M,T> TMatrixMM<M,T>::adjugate() const
 template<unsigned int M,typename T>
 TMatrixMM<M,T> TMatrixMM<M,T>::inverse() const
 {
-	return TMatrixMM<M,T>(matrix_ops::inverse<T>(M,m_matrix,Math::isZero,Math::recip));
+	return TMatrixMM<M,T>(matrix_ops::inverse<T>(M,m_matrix));
 }
 
 //destroy this matrix

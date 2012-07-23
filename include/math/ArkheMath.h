@@ -31,6 +31,7 @@ public:
 	static const double aTan(const double &x);
 	static const double aTan2(const double &x,const double &y);
 	static const int signum(const double &x);
+	static const double rand(unsigned int n);
 	//static variables
 	static const double MIN;
 	static const double MAX;

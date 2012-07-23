@@ -47,6 +47,8 @@ void App::setView()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(60.0,(double)width/(double)height,1.0,500.0);
+	//gluOrtho2D(0,width,height,0);
+	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -58,7 +60,7 @@ void App::display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 	gluLookAt(0.0f,5.0f,10.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-
+	
 	//draw simple cube
 	glColor3f(0,0,1);
 	glPushMatrix();
