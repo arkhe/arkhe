@@ -11,6 +11,8 @@
 #include <vector>
 #include <sstream>
 
+#include <iostream>
+
 namespace arkhe
 {
 
@@ -597,6 +599,7 @@ T *adjugate(unsigned int M,const T *A)
 		{
 			B[x++] = cofactor<T>(i,j,M,A);
 		}
+		std::cout << "COFACTOR MATRIX " << ((double)(i+1) / M) * 100 << "% ..." << std::endl;
 	}
 	clean(M,M,B);
 	T *C = transpose<T>(M,M,B);

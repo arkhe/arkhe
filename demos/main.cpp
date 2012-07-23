@@ -32,7 +32,8 @@ class TestApp : public App
 public:
 	TestApp()
 	{
-		width = height = 100;
+		width = 500;
+		height = 500;
 		inverse = false;
 		pixels = new float[width*height*3];
 	}
@@ -41,19 +42,19 @@ public:
 	{
 		//find an invertible matrix
 		unsigned int y = 0;
-		int pick[100*100];
-		TMatrixMM<100,float> zero;
+		int pick[500*500];
+		TMatrixMM<500,float> zero;
 		while(true)
 		{
-			for(unsigned int j=0; j<width*height; j++)
+			for(unsigned int j=0; j<500*500; j++)
 			{
-				pick[j] = ::rand() % 1024;
+				pick[j] = ::rand() % 1024; //(float)((j+y) % (500*500));
 			}
-			for(unsigned int j=0; j<width*height; j++)
+			for(unsigned int j=0; j<500*500; j++)
 			{
-				m_R[j] = pick[j];
+				m[j] = pick[j];
 			}
-			float det = m_R.determinant();
+			float det = m.determinant();
 			if(!Math::isZero(det))
 			{
 				break;
@@ -62,22 +63,19 @@ public:
 			std::cout << "ATTEMPT " << y << " TO FIND AN INVERTIBLE MATRIX FAILED." << std::endl;
 		}
 		std::cout << "GOT INVERTIBLE MATRIX." << std::endl;
-		std::cout << "MIN ELEM: " << m_R.min_element() << std::endl;
-		std::cout << "MAX ELEM: " << m_R.max_element() << std::endl;
-		m_R /= m_R.max_element();
+		std::cout << "MIN ELEM: " << m.min_element() << std::endl;
+		std::cout << "MAX ELEM: " << m.max_element() << std::endl;
+		m /= m.max_element();
 		unsigned int x = 0;
-		for(unsigned int i=0; i<height; i++)
+		for(unsigned int i=0; i<500*500; i++)
 		{
-			for(unsigned int j=0; j<width; j++)
-			{
-				pixels[x++] = m_R(j,i);
-				pixels[x++] = m_R(j,i);
-				pixels[x++] = 0.0f;
-			}
+			pixels[x++] = m[i];
+			pixels[x++] = m[i];
+			pixels[x++] = m[i];
 		}
-		m_RI = m_R.inverse();
-		//m_GI = m_G.inverse();
-		if(m_GI == zero && m_RI == zero)
+		mi = m.inverse();
+		id = m * mi;
+		if(mi == zero)
 		{
 			std::cout << "BOTH NON-INVERTIBLE" << std::endl;
 		}
@@ -89,21 +87,25 @@ public:
 	void doit()
 	{
 		unsigned int x = 0;
-		for(unsigned int i=0; i<height; i++)
+		for(unsigned int i=0; i<500*500; i++)
 		{
-			for(unsigned int j=0; j<width; j++)
+			if(inverse)
 			{
-				if(inverse)
-				{
-					pixels[x++] = m_RI(j,i);
-					pixels[x++] = m_GI(j,i);
-				}
-				else
-				{
-					pixels[x++] = m_R(j,i);
-					pixels[x++] = m_G(j,i);
-				}
-				pixels[x++] = 0.0f;
+				pixels[x++] = mi[i];
+				pixels[x++] = mi[i];
+				pixels[x++] = mi[i];
+			}
+			else if(matrix)
+			{
+				pixels[x++] = m[i];
+				pixels[x++] = m[i];
+				pixels[x++] = m[i];
+			}
+			else
+			{
+				pixels[x++] = id[i];
+				pixels[x++] = id[i];
+				pixels[x++] = id[i];
 			}
 		}
 	}
@@ -137,195 +139,40 @@ public:
 		switch(k)
 		{
 		case 'i':
-			inverse = !inverse;
+			inverse = true;
+			matrix = identity = false;
 			doit();
 			break;
+		case 'm':
+			matrix = true;
+			inverse = identity = false;
+			doit();
+			break;
+		case 'n':
+			identity = true;
+			inverse = matrix = false;
+			doit();
+			break;
+		case 'q':
+			exit(1);
 		}
 	}
 private:
-	bool inverse;
-	TMatrixMM<100,float> m_R,m_G,m_RI,m_GI;
+	bool inverse,matrix,identity;
+	TMatrixMM<500,float> m,mi,id;
 	float *pixels;
 };
 
-int main(int argc,char **argv)
+void inversion_tests()
 {
-	GLUTWrapper::setApplication(new TestApp);
-	GLUTWrapper::run(argc,argv);	
-
-	/*try
+	try
 	{
-		/*{
-			std::cout << "BENCHMARK:" << std::endl;
-			unsigned int BENCH_LOOP = 21;
-			unsigned int COUNT = 2;
-			unsigned int POWER = 2;
-			double t;
-			double TOTAL_TIME = 0.0;
-			unsigned int TOTAL_COUNT = 0;
-			for(unsigned int i=1; i<=BENCH_LOOP; i++)
-			{
-				std::cout << "INNER LOOP COUNT: " << COUNT << " TOOK: ";
-				arkhe::base::Timer timer;
-				timer.start();
-				for(unsigned int j=1; j<=COUNT; j++)
-				{
-					Vector2 v21,v22;
-					Vector3 v31,v32;
-					v21 = Vector2(i,j);
-					v22 = Vector2(j,i);
-					v31 = Vector3(i,j,(i+j));
-					v32 = Vector3((i+j),j,i);
-					
-					double dot2 = v21.dot(v22);
-					double dot3 = v31.dot(v32);
-
-					v31.normalize();
-					v21.normalize();
-					
-
-					Matrix44 m7,m8,m9;
-					m7 = m8;
-					m8 = m9 + m7;
-					m9 = m7 * m8;
-					m7 = m8.transpose();
-				}
-				timer.stop();
-				t = timer.time();
-				std::cout << t << " seconds." << std::endl;
-				TOTAL_TIME += t;
-				TOTAL_COUNT += COUNT;
-				COUNT *= POWER;
-			}
-			std::cout << "--------------------------------------------" << std::endl;
-			std::cout << TOTAL_COUNT << " ITERATIONS TOOK " << TOTAL_TIME << " SECONDS" << std::endl;
-		}*/
-
-		/*//Matrix44 m(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16),U,L;
-		Matrix44 m(6,3,5,78,0,1,2,54,78,3,45,24,91,0,1,34),U,L;
-		std::cout << m << std::endl;
-		std::cout << "TRACE: " << m.trace() << std::endl;
-
-		std::cout << "TESTING LU DECOMPOSITION:" << std::endl;
-		std::cout << "MATRIX:\n" << m << std::endl;
-		L = m.lower();
-		L.clean();
-		std::cout << "LOWER MATRIX:\n" << L << std::endl;
-		U = m.upper();
-		U.clean();
-		std::cout << "UPPER MATRIX:\n" << U << std::endl;
-
-		std::cout << "LOWER x UPPER:\n" << L * U << std::endl;
-
-		Matrix22 m2(1,2,3,4);
-		std::cout << m2 << std::endl;
-		double det = m2.determinant();
-		std::cout << "2x2 DETERMINANT: " << det << std::endl;
-		std::cout << "2x2 ADJUGATE:\n" << m2.adjugate() << std::endl;
-		det = m.determinant(); 
-		std::cout << "4x4 DETERMINANT: " << det << std::endl;
-		std::cout << "4x4 ADJUGATE:\n" << m.adjugate() << std::endl;
-
-		Matrix33 m3 = Matrix33(1,2,3,0,1,4,5,6,0);
-		std::cout << m3 << std::endl;
-		//m3 = m3.transpose();
-		std::cout << "3x3 DETERMINANT: " << m3.determinant() << std::endl;
-		std::cout << "3x3 ADJUGATE:\n" << m3.adjugate() << std::endl;
-
-		std::cout << "=====================================" << std::endl;
-		TMatrixMM<5,double> M;
-		M[0] = 25;
-		M[1] = 512;
-		M[2] = 15;
-		M[3] = 15;
-		M[4] = 155;
-
-		M[5] = 51;
-		M[6] = 541;
-		M[7] = 54;
-		M[8] = 0;
-		M[9] = 51;
-
-		M[10] = 48;
-		M[11] = 21;
-		M[12] = 25;
-		M[13] = 5;
-		M[14] = 48;
-
-		M[15] = 0;
-		M[16] = 7;
-		M[17] = 4;
-		M[18] = 596;
-		M[19] = 69;
-
-		M[20] = 16;
-		M[21] = 26;
-		M[22] = 64;
-		M[23] = 65;
-		M[24] = 9;
-		//std::cout << std::fixed << std::endl;
-		std::cout << M << std::endl;
-		std::cout << "5x5 DETERMINANT: " << M.determinant() << std::endl;
-		std::cout << "5x5 ADJUGATE:\n" << M.adjugate() << std::endl;
-		TMatrixMM<5,double> MxI = M * M.inverse();
-		MxI.clean();
-		std::cout << "5x5 MATRIX * INVERSE:\n" << MxI << std::endl;*/
-		
-		/*Matrix33 M2(1,0,3,4,0,6,0,8,9);
-		std::cout << M2 << std::endl;
-		std::cout << "3x3 DETERMINANT: " << M2.determinant() << std::endl;
-		std::cout << "3x3 ADJUGATE:\n" << M2.adjugate() << std::endl;
-		std::cout << "3x3 INVERSE:\n" << M2.inverse() << std::endl;
-		std::cout << "3x3 MATRIX * INVERSE:\n" << M2 * M2.inverse() << std::endl;*/
-
-		/*const unsigned int SIZE = 512;
-		TMatrixMM<SIZE,double> m,mi;
-		for(unsigned int i=0; i<SIZE; i++)
-		{
-			m[0] = ::rand() % 50;
-		}
-		Timer timer;
-		timer.start();
-		mi = m.inverse();
-		timer.stop();
-		double t = timer.time();
-		if(!mi.zero())
-		{
-			std::cout << "INVERSION OF " << SIZE << 'x' << SIZE << " MATRIX TOOK " << t << " SECONDS" << std::endl;
-		}
-		else
-		{
-			std::cout << "NOT INVERTIBLE" << std::endl;
-		}*/
-
-		/*unsigned int LOOP = 100000;
+		unsigned int LOOP = 100000;
 		unsigned int STEP = LOOP * 0.1;
 		const unsigned int DIM = 16;
 		unsigned int INVERTIBLE = 0;
 		unsigned int NON_INVERTIBLE = 0;
 		double TOTAL_TIME = 0.0;
-		TMatrixMM<DIM,double> identity;
-		for(unsigned int i=0; i<DIM; i++)
-			for(unsigned int j=0; j<DIM; j++)
-				if(i == j)
-					identity(i,j) = 1.0;
-				else
-					identity(i,j) = 0.0;
-		TMatrixMM<DIM,double> test;
-		for(unsigned int j=0; j<DIM*DIM; j++)
-		{
-			test[j] = ::rand() % 50;
-		}
-		
-		//std::cout << test << std::endl;
-		//std::cout << std::fixed << std::endl;
-		//std::cout << test.inverse() << std::endl;
-		//std::cout << std::scientific << std::endl;
-		TMatrixMM<DIM,double> res = test * test.inverse();
-		res.clean();
-		//std::cout << res << std::endl;
-
-		//std::cout << identity << std::endl;
 
 		std::cout << "PERFORMING " << LOOP << " ITERATIONS WITH " << DIM << "x" << DIM << " MATRICES:" << std::endl;
 		std::cout << "GENERATE MATRIX WITH RANDOM ELEMENTS, AND COMPUTE IT'S INVERSE." << std::endl;
@@ -367,29 +214,56 @@ int main(int argc,char **argv)
 		std::cout << INVERTIBLE << " WERE INVERTIBLE" << std::endl;
 		std::cout << NON_INVERTIBLE << " WERE NON-INVERTIBLE" << std::endl;
 		TOTAL_TIME += t;
-	}*/
-	/*}
-	catch(arkhe::base::Exception e)
-	{
-		std::cout << e.what() << std::endl;
-	}*/
-
-	//DO NOT ERASE
-
-	/*std::cout << std::endl;
-	std::cout << "Running integrity tests..." << std::endl;
-	try
-	{
-		std::cout << "Running arkhe math integrity tests..." << std::endl;
-		MathIntegrityTests::run_all_tests();
-		std::cout << "Integrity of all math tests verified..." << std::endl;
 	}
 	catch(arkhe::base::Exception e)
 	{
 		std::cout << e.what() << std::endl;
-	}*/
+	}
+}
 
-	//while(!_kbhit()) ;
+void big_matrix_inverse()
+{		
+	//find an invertible matrix
+	const unsigned int DIM = 100;
+	unsigned int y = 0;
+	TMatrixMM<DIM,float> m,mi;
+	while(true)
+	{
+		for(unsigned int j=0; j<DIM*DIM; j++)
+		{
+			m[j] = ::rand() % 1024;
+		}
+		float det = m.determinant();
+		if(!Math::isZero(det))
+		{
+			break;
+		}
+		y++;
+		std::cout << "ATTEMPT " << y << " TO FIND AN INVERTIBLE MATRIX FAILED." << std::endl;
+	}
+	std::cout << "GOT INVERTIBLE MATRIX." << std::endl;
+	std::cout << "MIN ELEM: " << m.min_element() << std::endl;
+	std::cout << "MAX ELEM: " << m.max_element() << std::endl;
+
+	Timer timer;
+	timer.start();
+
+	mi = m.inverse();
+
+	timer.stop();
+	std::cout << "INVERSION OF " << DIM << 'x' << DIM << " MATRIX TOOK " << timer.time() << " SECONDS." << std::endl;
+}
+
+int main(int argc,char **argv)
+{
+	GLUTWrapper::setApplication(new TestApp);
+	GLUTWrapper::run(argc,argv);
+
+	//inversion_tests();
+
+	//big_matrix_inverse();
+
+	while(!_kbhit()) ;
 
 	return 0;
 }
