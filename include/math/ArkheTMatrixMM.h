@@ -20,6 +20,12 @@ template<unsigned int M,typename T>
 class TMatrixMM
 {
 public:
+	//enums
+	enum Inverse
+	{
+		COFACTOR,
+		GAUSS_JORDAN
+	}; //enum Inverse
 	//friends
 	friend Matrix22;
 	friend Matrix33;
@@ -62,7 +68,7 @@ public:
 	TMatrixMM upper() const;
 	T determinant() const;
 	TMatrixMM adjugate() const;
-	TMatrixMM inverse() const;
+	TMatrixMM inverse(Inverse i=COFACTOR) const;
 private:
 	//
 protected:
@@ -327,9 +333,14 @@ TMatrixMM<M,T> TMatrixMM<M,T>::adjugate() const
 
 //get inverse
 template<unsigned int M,typename T>
-TMatrixMM<M,T> TMatrixMM<M,T>::inverse() const
+TMatrixMM<M,T> TMatrixMM<M,T>::inverse(Inverse i) const
 {
-	return TMatrixMM<M,T>(matrix_ops::inverse<T>(M,m_matrix));
+	if(i == TMatrixMM<M,T>::COFACTOR)
+	{
+		return TMatrixMM<M,T>(matrix_ops::inverse<T>(M,m_matrix));
+	}
+	//use Gauss-Jordan elimination
+	return TMatrixMM<M,T>(matrix_ops::gauss_jordan_elimination<T>(M,m_matrix));
 }
 
 //destroy this matrix

@@ -11,8 +11,6 @@
 #include <vector>
 #include <sstream>
 
-#include <iostream>
-
 namespace arkhe
 {
 
@@ -599,7 +597,6 @@ T *adjugate(unsigned int M,const T *A)
 		{
 			B[x++] = cofactor<T>(i,j,M,A);
 		}
-		std::cout << "COFACTOR MATRIX " << ((double)(i+1) / M) * 100 << "% ..." << std::endl;
 	}
 	clean(M,M,B);
 	T *C = transpose<T>(M,M,B);
@@ -607,7 +604,7 @@ T *adjugate(unsigned int M,const T *A)
 	return C;
 }
 
-//get MxM inverse
+//get MxM inverse by cofactors
 template<typename T>
 T *inverse(unsigned int M,const T *A) //,const bool (*zero_func)(const T &t),const T (*recip_func)(const T &t))
 {
@@ -618,7 +615,8 @@ T *inverse(unsigned int M,const T *A) //,const bool (*zero_func)(const T &t),con
 	}
 
 	//compute determinant
-	//if determinant is zero, then return zero matrix
+	//if determinant is zero, then this matrix
+	//is a singular matrix. return the zero matrix
 	T det = determinant(M,A);
 	if(is_zero<T>(det))
 	{
@@ -632,6 +630,124 @@ T *inverse(unsigned int M,const T *A) //,const bool (*zero_func)(const T &t),con
 	clean<T>(M,M,B);
 	return B;
 }
+
+///////////////////////////////////////////////////////////////////////
+////////////////////// GAUSS-JORDAN ELIMINATION ///////////////////////
+//create augmented matrix
+template<typename T>
+T *augmented_matrix(unsigned int M,const T *A)
+{
+	T *B = new T[M*(M+M)];
+	for(unsigned int i=0; i<M; i++)
+	{
+		for(unsigned int j=0; j<M+M; j++)
+		{
+			if(j < M)
+			{
+				B[index<T>(i,j,M,M+M)] = A[index<T>(i,j,M,M)];
+			}
+			else
+			{
+				if(i == j-M)
+				{
+					B[index<T>(i,j,M,M+M)] = get_unit<T>();
+				}
+				else
+				{
+					B[index<T>(i,j,M,M+M)] = get_zero<T>();
+				}
+			}
+		}
+	}
+	return B;
+}
+
+//exchange row i with row j
+template<typename T>
+void exchange_rows(unsigned int i,unsigned int j,unsigned int M,T *A)
+{
+	if(i == j)
+	{
+		throw arkhe::base::Exception("cannot exchange the same row");
+	}
+	T tmp;
+	for(unsigned int k=0; k<M; k++)
+	{
+		tmp = A[index<T>(i,k,M,M)];
+		A[index<T>(i,k,M,M)] = A[index<T>(j,k,M,M)];
+		A[index<T>(j,k,M,M)] = tmp;
+	}
+}
+
+//add multiple of row i to row j
+template<typename T>
+void add_rows(const T &multiple,unsigned int i,unsigned int j,unsigned int M,T *A)
+{
+	for(unsigned int k=0; k<M; k++)
+	{
+		A[index<T>(j,k,M,M)] += -multiple * A[index<T>(i,k,M,M)];
+	}
+}
+
+//gauss-jordan elimination on MxM matrix
+template<typename T>
+T *gauss_jordan_elimination(unsigned int M,const T *A)
+{
+	if(M == 0)
+	{
+		throw arkhe::base::Exception("zero element matrix");
+	}
+
+	//create augmented matrix
+	T *B = augmented_matrix<T>(M,A);
+	unsigned int largest_row;
+	for(unsigned int i=0; i<M; i++)
+	{
+		largest_row = i;
+		for(unsigned int j=i; j<M; j++)
+		{
+			//find largest row
+			if(abs<T>(B[index<T>(j,i,M,M+M)]) > abs<T>(B[index<T>(largest_row,i,M,M+M)]))
+			{
+				largest_row = j;
+			}
+		}
+		//swap rows
+		if(i != largest_row)
+		{
+			exchange_rows<T>(i,largest_row,M+M,B);
+		}
+
+		//normalize
+		T recip = get_recip<T>(B[index<T>(i,i,M,M+M)]);
+		for(unsigned int k=0; k<M+M; k++)
+		{
+			B[index<T>(i,k,M,M+M)] *= recip;
+		}
+
+		//normalize and eliminate other rows
+		for(unsigned int k=0; k<M; k++)
+		{
+			if(k != i)
+			{
+				T multiple = B[index<T>(k,i,M,M+M)];
+				add_rows<T>(multiple,i,k,M+M,B);
+			}
+		}
+	}
+	T *C = new T[M*M];
+	unsigned int x = 0;
+	for(unsigned int i=0; i<M; i++)
+	{
+		for(unsigned int j=M; j<M+M; j++)
+		{
+			C[x++] = B[index<T>(i,j,M,M+M)];
+		}
+	}
+	delete[] B;
+	return C;
+}
+///////////////////////////////////////////////////////////////////////
 
 } //namespace matrix_ops
 

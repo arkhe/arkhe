@@ -117,6 +117,9 @@ const double Math::rand(unsigned int n)
 template<> bool are_equal<float>(const float &a,const float &b,const float &epsilon) { return Math::equal(a,b,epsilon); }
 template<> bool are_equal<double>(const double &a,const double &b,const double &epsilon) { return Math::equal(a,b,epsilon); }
 
+template<> float abs<float>(const float &x) { return ::fabsf(x); }
+template<> double abs<double>(const double &x) { return ::abs(x); }
+
 template<> float get_zero<float>() { return 0.0f; }
 template<> double get_zero<double>() { return 0.0; }
 

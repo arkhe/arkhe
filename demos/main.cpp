@@ -73,7 +73,7 @@ public:
 			pixels[x++] = m[i];
 			pixels[x++] = m[i];
 		}
-		mi = m.inverse();
+		mi = m.inverse(TMatrixMM<500,float>::GAUSS_JORDAN);
 		id = m * mi;
 		if(mi == zero)
 		{
@@ -169,7 +169,7 @@ void inversion_tests()
 	{
 		unsigned int LOOP = 100000;
 		unsigned int STEP = LOOP * 0.1;
-		const unsigned int DIM = 16;
+		const unsigned int DIM = 4;
 		unsigned int INVERTIBLE = 0;
 		unsigned int NON_INVERTIBLE = 0;
 		double TOTAL_TIME = 0.0;
@@ -187,23 +187,27 @@ void inversion_tests()
 			{
 				std::cout << "On loop " << i << " of " << LOOP << " ..." << std::endl;
 			}
-			TMatrixMM<DIM,double> m,mi,mxi,zero;
+			TMatrixMM<DIM,double> m,mi,mxi,zero,identity(matrix_ops::identity<double>(DIM));
 			//init
 			for(unsigned int j=0; j<DIM*DIM; j++)
 			{
 				m[j] = ::rand() % 100;
 			}
-			mi = m.inverse();
-			mi.clean();
-			mxi = m * mi;
-			mxi.clean();
-			if(mi == zero)
+			if(!Math::isZero(m.determinant()))
 			{
-				NON_INVERTIBLE++;
+				mi = m.inverse(TMatrixMM<DIM,double>::GAUSS_JORDAN);
+				mi.clean();
+				mxi = m * mi;
+				mxi.clean();
+				if(mxi != identity)
+				{
+					//NON_INVERTIBLE++;
+				}
+				INVERTIBLE++;
 			}
 			else
 			{
-				INVERTIBLE++;
+				NON_INVERTIBLE++;
 			}
 			i++;
 		}
@@ -224,7 +228,7 @@ void inversion_tests()
 void big_matrix_inverse()
 {		
 	//find an invertible matrix
-	const unsigned int DIM = 100;
+	const unsigned int DIM = 1024;
 	unsigned int y = 0;
 	TMatrixMM<DIM,float> m,mi;
 	while(true)
@@ -248,7 +252,7 @@ void big_matrix_inverse()
 	Timer timer;
 	timer.start();
 
-	mi = m.inverse();
+	mi = m.inverse(TMatrixMM<DIM,float>::GAUSS_JORDAN);
 
 	timer.stop();
 	std::cout << "INVERSION OF " << DIM << 'x' << DIM << " MATRIX TOOK " << timer.time() << " SECONDS." << std::endl;

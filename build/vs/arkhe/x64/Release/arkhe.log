@@ -1,53 +1,9 @@
-﻿Build started 7/23/2012 12:04:10 PM.
-     1>Project "C:\work\dev\git\arkhe\build\vs\arkhe\arkhe.vcxproj" on node 2 (build target(s)).
-     1>InitializeBuildStatus:
-         Creating "x64\Release\arkhe.unsuccessfulbuild" because "AlwaysCreate" was specified.
-       ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc100.pdb" /Gd /TP /errorReport:prompt ..\..\..\demos\main.cpp
-         main.cpp
-     1>c:\work\dev\git\arkhe\include\math\ArkheMatrixOps.h(413): warning C4244: 'argument' : conversion from 'const double' to 'const float', possible loss of data
-                 c:\work\dev\git\arkhe\include\math\ArkheTMatrixMM.h(252) : see reference to function template instantiation 'bool arkhe::math::matrix_ops::equal<T>(unsigned int,unsigned int,const T *,const T *)' being compiled
-                 with
-                 [
-                     T=float
-                 ]
-                 c:\work\dev\git\arkhe\include\math\ArkheTMatrixMM.h(251) : while compiling class template member function 'bool arkhe::math::TMatrixMM<M,T>::operator ==(const arkhe::math::TMatrixMM<M,T> &) const'
-                 with
-                 [
-                     M=500,
-                     T=float
-                 ]
-                 ..\..\..\demos\main.cpp(162) : see reference to class template instantiation 'arkhe::math::TMatrixMM<M,T>' being compiled
-                 with
-                 [
-                     M=500,
-                     T=float
-                 ]
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\work\dev\git\arkhe\build\vs\arkhe\../../../bin/arkhe.exe" /INCREMENTAL:NO /NOLOGO glut64.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"x64\Release\arkhe.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\work\dev\git\arkhe\bin\arkhe.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\work\dev\git\arkhe\build\vs\arkhe\../../../bin/arkhe.lib" /MACHINE:X64 x64\Release\main.obj
-         x64\Release\ArkheApp.obj
-         x64\Release\ArkheGLUTWrapper.obj
-         x64\Release\ArkheException.obj
-         x64\Release\ArkheTimer.obj
-         x64\Release\ArkheAngle.obj
-         x64\Release\ArkheComplex.obj
-         x64\Release\ArkheMath.obj
-         x64\Release\ArkhePolynomial.obj
-         x64\Release\ArkhePVNM.obj
-         x64\Release\ArkheRational.obj
-         x64\Release\ArkheRootFinding.obj
-         x64\Release\ArkheVectorOps.obj
-         x64\Release\math_integrity_tests.obj
-         Generating code
-         Finished generating code
-         arkhe.vcxproj -> C:\work\dev\git\arkhe\build\vs\arkhe\../../../bin/arkhe.exe
-       Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\work\dev\git\arkhe\build\vs\arkhe\../../../bin/arkhe.exe;#1" /manifest x64\Release\arkhe.exe.intermediate.manifest
-       FinalizeBuildStatus:
-         Deleting file "x64\Release\arkhe.unsuccessfulbuild".
-         Touching "x64\Release\arkhe.lastbuildstate".
-     1>Done Building Project "C:\work\dev\git\arkhe\build\vs\arkhe\arkhe.vcxproj" (build target(s)).
+﻿Build started 7/24/2012 10:27:08 PM.
+     1>Project "C:\work\dev\git\arkhe\build\vs\arkhe\arkhe.vcxproj" on node 2 (clean target(s)).
+     1>_PrepareForClean:
+         Deleting file "x64\Release\arkhe.lastbuildstate".
+     1>Done Building Project "C:\work\dev\git\arkhe\build\vs\arkhe\arkhe.vcxproj" (clean target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.79
+Time Elapsed 00:00:00.30

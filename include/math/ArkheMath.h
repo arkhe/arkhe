@@ -53,6 +53,7 @@ protected:
 
 //template specialization
 template<typename T> bool are_equal(const T &a,const T &b,const T &epsilon);
+template<typename T> T abs(const T &t);
 template<typename T> T get_zero();
 template<typename T> T get_unit();
 template<typename T> T set_zero(T &t);
