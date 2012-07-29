@@ -68,7 +68,7 @@ private:
 	//
 protected:
 	//
-};
+}; //class RootFinding
 
 } //namespace math
 

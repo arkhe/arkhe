@@ -137,6 +137,14 @@ Matrix22::Matrix22(double m00,double m01,double m10,double m11) : TMatrixMM<2,do
 	m_matrix[3] = m11;
 }
 
+Matrix22::Matrix22(const Vector2 &b1,const Vector2 &b2)
+{
+	m_matrix[0] = b1[0];
+	m_matrix[2] = b1[1];
+	m_matrix[1] = b2[0];
+	m_matrix[3] = b2[1];
+}
+
 Matrix22::Matrix22(const TMatrixMM<2,double> &m) : TMatrixMM<2,double>(m) {}
 
 Matrix22 &Matrix22::operator=(const TMatrixMM<2,double> &m)
@@ -226,6 +234,21 @@ Matrix33::Matrix33
 	m_matrix[6] = m20;
 	m_matrix[7] = m21;
 	m_matrix[8] = m22;
+}
+
+Matrix33::Matrix33(const Vector3 &b1,const Vector3 &b2,const Vector3 &b3)
+{
+	m_matrix[0] = b1[0];
+	m_matrix[3] = b1[1];
+	m_matrix[6] = b1[2];
+
+	m_matrix[1] = b2[0];
+	m_matrix[4] = b2[1];
+	m_matrix[7] = b2[2];
+
+	m_matrix[2] = b3[0];
+	m_matrix[5] = b3[1];
+	m_matrix[8] = b3[2];
 }
 
 Matrix33::Matrix33(const TMatrixMM<3,double> &m) : TMatrixMM<3,double>(m) {}
@@ -330,6 +353,27 @@ Matrix44::Matrix44
 	m_matrix[13] = m31;
 	m_matrix[14] = m32;
 	m_matrix[15] = m33;
+}
+
+//last column assumed to default to [0 0 0 1]
+Matrix44::Matrix44(const Vector3 &b1,const Vector3 &b2,const Vector3 &b3)
+{
+	m_matrix[0] = b1[0];
+	m_matrix[4] = b1[1];
+	m_matrix[8] = b1[2];
+	m_matrix[12] = 0.0;
+	m_matrix[1] = b2[0];
+	m_matrix[5] = b2[1];
+	m_matrix[9] = b2[2];
+	m_matrix[13] = 0.0;
+	m_matrix[2] = b3[0];
+	m_matrix[6] = b3[1];
+	m_matrix[10] = b3[2];
+	m_matrix[14] = 0.0;
+	m_matrix[3] = 0.0;
+	m_matrix[7] = 0.0;
+	m_matrix[11] = 0.0;
+	m_matrix[15] = 1.0;
 }
 
 Matrix44::Matrix44(const TMatrixMM<4,double> &m) : TMatrixMM<4,double>(m) {}

@@ -2,7 +2,7 @@
 #define __ARKHE_BASE_T2DARRAY_H__
 
 //arkhe base includes
-#include "ArkheTArray.hpp"
+#include "ArkheTArray.h"
 #include "ArkheException.h"
 
 namespace arkhe

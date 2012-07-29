@@ -11,6 +11,8 @@
 #include <vector>
 #include <sstream>
 
+#include <iostream>
+
 namespace arkhe
 {
 
@@ -253,6 +255,7 @@ T *copy(unsigned int M,unsigned int N,const T *A)
 }
 
 //get index of element (i,j) from MxN matrix
+//TODO: template not necessary, fix this later!!!
 template<typename T>
 unsigned int index(unsigned int i,unsigned int j,unsigned int M,unsigned int N)
 {
@@ -606,7 +609,7 @@ T *adjugate(unsigned int M,const T *A)
 
 //get MxM inverse by cofactors
 template<typename T>
-T *inverse(unsigned int M,const T *A) //,const bool (*zero_func)(const T &t),const T (*recip_func)(const T &t))
+T *inverse(unsigned int M,const T *A)
 {
 	unsigned int num_elements = M*M;
 	if(num_elements == 0)
@@ -712,6 +715,10 @@ T *gauss_jordan_elimination(unsigned int M,const T *A)
 				largest_row = j;
 			}
 		}
+
+		//is this matrix singular?
+		//TODO
+
 		//swap rows
 		if(i != largest_row)
 		{

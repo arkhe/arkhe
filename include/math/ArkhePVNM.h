@@ -92,6 +92,7 @@ public:
 	//constructor
 	Matrix22();
 	Matrix22(double m00,double m01,double m10,double m11);
+	Matrix22(const Vector2 &b1,const Vector2 &b2);
 	Matrix22(const TMatrixMM<2,double> &m);
 	//operators
 	Matrix22 &operator=(const TMatrixMM<2,double> &m);
@@ -116,6 +117,7 @@ public:
 		double m10,double m11,double m12,
 		double m20,double m21,double m22
 	);
+	Matrix33(const Vector3 &b1,const Vector3 &b2,const Vector3 &b3);
 	Matrix33(const TMatrixMM<3,double> &m);
 	//operators
 	Matrix33 &operator=(const TMatrixMM<3,double> &m);
@@ -141,6 +143,7 @@ public:
 		double m20,double m21,double m22,double m23,
 		double m30,double m31,double m32,double m33
 	);
+	Matrix44(const Vector3 &b1,const Vector3 &b2,const Vector3 &b3);
 	Matrix44(const TMatrixMM<4,double> &m);
 	//operators
 	Matrix44 &operator=(const TMatrixMM<4,double> &m);

@@ -14,7 +14,7 @@ namespace arkhe
 namespace math
 {
 
-//MxN (row-column order) matrix
+//MxN (column-major) matrix
 template<typename T>
 class TMatrixMN
 {

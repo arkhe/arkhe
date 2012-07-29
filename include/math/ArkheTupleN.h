@@ -121,7 +121,7 @@ double TupleN<N>::operator[](unsigned int i) const
 	{
 		throw arkhe::base::Exception("out of range");
 	}
-	return *((&m_tuple[i]) + i);
+	return *(&m_tuple[i]);
 }
 
 template<unsigned int N>
@@ -131,7 +131,7 @@ double &TupleN<N>::operator[](unsigned int i)
 	{
 		throw arkhe::base::Exception("out of range");
 	}
-	return *((&m_tuple[i]) + i);
+	return *(&m_tuple[i]);
 }
 
 template<unsigned int N>

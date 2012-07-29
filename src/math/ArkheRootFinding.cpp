@@ -41,7 +41,7 @@ RootFinding::Roots::Roots(const std::vector<Complex> &r)
 			}
 			if(got_real && got_complex)
 			{
-				break; //no point in wasting cycles
+				break;
 			}
 			++i;
 		}

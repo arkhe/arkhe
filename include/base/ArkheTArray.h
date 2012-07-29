@@ -23,6 +23,8 @@ public:
 	virtual ~TArray();
 	//operators
 	TArray<T> &operator=(const TArray<T> &copy);
+	T operator[](unsigned int i) const;
+	T &operator[](unsigned int i);
 	virtual T operator()(unsigned int i) const;
 	virtual T &operator()(unsigned int i);
 	//methods
@@ -54,17 +56,17 @@ template<typename T> TArray<T>::TArray(const TArray<T> &copy)
 {
 	if(copy.m_data != 0)
 	{
-		this->m_data = new T[copy.m_size];
-		this->m_size = copy.m_size;
+		m_data = new T[copy.m_size];
+		m_size = copy.m_size;
 		for(unsigned int i=0; i<m_size; i++)
 		{
-			*(this->m_data[i]) = *(copy.m_data[i]);
+			m_data[i] = copy.m_data[i];
 		}
 	}
 	else
 	{
-		this->m_data = 0;
-		this->m_size = 0;
+		m_data = 0;
+		m_size = 0;
 	}
 }
 
@@ -83,19 +85,37 @@ template<typename T> TArray<T> &TArray<T>::operator=(const TArray<T> &copy)
 	delete [] m_data;
 	if(copy.m_data != 0)
 	{
-		this->m_data = new T[copy.m_size];
-		this->m_size = copy.m_size;
+		m_data = new T[copy.m_size];
+		m_size = copy.m_size;
 		for(unsigned int i=0; i<m_size; i++)
 		{
-			*(this->m_data[i]) = *(copy.m_data[i]);
+			m_data[i] = copy.m_data[i];
 		}
 	}
 	else
 	{
-		this->m_data = 0;
-		this->m_size = 0;
+		m_data = 0;
+		m_size = 0;
 	}
 	return *this;
+}
+
+template<typename T> T TArray<T>::operator[](unsigned int i) const
+{
+	if(i >= m_size)
+	{
+		throw arkhe::base::Exception("out of range");
+	}
+	return *(&m_tuple[i]);
+}
+
+template<typename T> T &TArray<T>::operator[](unsigned int i)
+{
+	if(i >= m_size)
+	{
+		throw arkhe::base::Exception("out of range");
+	}
+	return *(&m_data[i]);
 }
 
 template<typename T> T TArray<T>::operator()(unsigned int i) const

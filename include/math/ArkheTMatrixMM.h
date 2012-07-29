@@ -15,7 +15,27 @@ class Matrix22;
 class Matrix33;
 class Matrix44;
 
-//square MxM (row-column order) matrix
+//square MxM (column-major) matrix
+//
+//The columns represent the basis vectors of
+//the coordinate system.
+//
+//Example
+//Given 4x4 matrix with basis
+//vectors i,j and k, and translation T,
+//our matrix is constructed like so:
+//
+//ix   jx   kx   Tx
+//iy   jy   ky   Ty
+//iz   jz   kz   Tz
+//0     0    0    1
+//
+//Element layout
+//Array for 3x3 contains the following: 1,2,3,4,5,6,7,8,9
+//which are represented as:
+//1 2 3
+//4 5 6
+//7 8 9
 template<unsigned int M,typename T>
 class TMatrixMM
 {

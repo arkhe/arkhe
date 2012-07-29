@@ -151,8 +151,11 @@
     <ClInclude Include="..\..\..\include\app\ArkheGLUTWrapper.h" />
     <ClInclude Include="..\..\..\include\base\ArkheDefines.h" />
     <ClInclude Include="..\..\..\include\base\ArkheException.h" />
-    <ClInclude Include="..\..\..\include\base\ArkheT2dArray.hpp" />
-    <ClInclude Include="..\..\..\include\base\ArkheTArray.hpp" />
+    <ClInclude Include="..\..\..\include\base\ArkheImage.h" />
+    <ClInclude Include="..\..\..\include\base\ArkhePPMImage.h" />
+    <ClInclude Include="..\..\..\include\base\ArkheStringUtils.h" />
+    <ClInclude Include="..\..\..\include\base\ArkheT2dArray.h" />
+    <ClInclude Include="..\..\..\include\base\ArkheTArray.h" />
     <ClInclude Include="..\..\..\include\base\ArkheTimer.h" />
     <ClInclude Include="..\..\..\include\math\ArkheAngle.h" />
     <ClInclude Include="..\..\..\include\math\ArkheComplex.h" />
@@ -177,6 +180,8 @@
     <ClCompile Include="..\..\..\src\app\ArkheApp.cpp" />
     <ClCompile Include="..\..\..\src\app\ArkheGLUTWrapper.cpp" />
     <ClCompile Include="..\..\..\src\base\ArkheException.cpp" />
+    <ClCompile Include="..\..\..\src\base\ArkheImage.cpp" />
+    <ClCompile Include="..\..\..\src\base\ArkhePPMImage.cpp" />
     <ClCompile Include="..\..\..\src\base\ArkheTimer.cpp" />
     <ClCompile Include="..\..\..\src\math\ArkheAngle.cpp" />
     <ClCompile Include="..\..\..\src\math\ArkheComplex.cpp" />
@@ -187,6 +192,9 @@
     <ClCompile Include="..\..\..\src\math\ArkheRootFinding.cpp" />
     <ClCompile Include="..\..\..\src\math\ArkheVectorOps.cpp" />
     <ClCompile Include="..\..\..\src\math\math_integrity_tests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\notes\notes.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
